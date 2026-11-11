@@ -57,7 +57,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             let task = TaskRepository::mark_task_as_done(args.id).unwrap();
             println!("Task {} completed well done!", task.title)
         }
-        Commands::Delete(args) => {}
+        Commands::Delete(args) => {
+            TaskRepository::delete_task(args.id).unwrap();
+            println!("Task removed successfuly")
+        }
     }
 
     Ok(())

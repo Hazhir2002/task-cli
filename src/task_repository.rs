@@ -66,6 +66,15 @@ impl TaskRepository {
         Ok(task)
     }
 
+    pub fn delete_task(id: i32) -> Result<(), Box<dyn Error>> {
+        let mut tasks = Self::load_tasks()?;
+
+        tasks.retain(|task| task.id != id);
+
+        Self::save_tasks(&tasks)?;
+        Ok(())
+    }
+
     pub fn mark_task_as_done(id: i32) -> Result<Task, Box<dyn Error>> {
         let mut tasks = Self::load_tasks()?;
 
