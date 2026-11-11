@@ -1,7 +1,8 @@
 use clap::{Args, Parser, Subcommand};
 use comfy_table::{Cell, Color, Table, presets::UTF8_FULL};
-use console::{Style, Term};
-use std::{error::Error, io::Write};
+use console::{Style, Term, style};
+use indicatif::ProgressBar;
+use std::{error::Error, io::Write, thread, time::Duration};
 
 mod task_repository;
 use task_repository::TaskRepository;
@@ -42,12 +43,16 @@ fn main() -> Result<(), Box<dyn Error>> {
     let term = Term::stdout();
 
     term.clear_screen()?;
-    term.write_line("Hello Hazhir")?;
+    println!("Hello {}", style("Hazhir").bold().cyan());
 
     match cli.command {
         Commands::Add(args) => {
             let task = TaskRepository::add_task(args.title).unwrap();
-            println!("Task successfuly created: {}", task.title)
+            println!(
+                "{} {}",
+                style("Task successfully created:").green(),
+                style(task.title).green().bold()
+            );
         }
         Commands::List => {
             let tasks = TaskRepository::load_tasks().unwrap();
@@ -70,11 +75,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
         Commands::Done(args) => {
             let task = TaskRepository::mark_task_as_done(args.id).unwrap();
-            println!("Task {} completed well done!", task.title)
+            println!(
+                "{} {} {}",
+                style("Task").cyan(),
+                style(&task.title).cyan().bold(),
+                style("completed well done!").cyan()
+            );
         }
         Commands::Delete(args) => {
             TaskRepository::delete_task(args.id).unwrap();
-            println!("Task removed successfuly")
+            println!("{}", style("Task removed successfuly").red())
         }
     }
 
