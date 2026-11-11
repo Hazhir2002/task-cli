@@ -1,6 +1,7 @@
-use std::{error::Error, fs};
+use std::{error::Error, fmt, fs};
 
 use chrono::{DateTime, Utc};
+
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -13,6 +14,15 @@ fn file_path() -> Result<PathBuf, Box<dyn Error>> {
 pub enum TaskStatus {
     Todo,
     Done,
+}
+
+impl fmt::Display for TaskStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TaskStatus::Todo => write!(f, "Todo"),
+            TaskStatus::Done => write!(f, "Done"),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

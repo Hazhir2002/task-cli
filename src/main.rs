@@ -1,5 +1,7 @@
 use clap::{Args, Parser, Subcommand};
-use std::error::Error;
+use comfy_table::{Cell, Color, Table, presets::UTF8_FULL};
+use console::{Style, Term};
+use std::{error::Error, io::Write};
 
 mod task_repository;
 use task_repository::TaskRepository;
@@ -37,6 +39,10 @@ struct DeleteAndDoneArgs {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
+    let term = Term::stdout();
+
+    term.clear_screen()?;
+    term.write_line("Hello Hazhir")?;
 
     match cli.command {
         Commands::Add(args) => {
@@ -48,9 +54,18 @@ fn main() -> Result<(), Box<dyn Error>> {
             if tasks.is_empty() {
                 println!("Currently you have no tasks you can rest or you can add a new task")
             } else {
+                let mut table = Table::new();
+                table
+                    .load_style(UTF8_FULL.with_rounded_corners())
+                    .set_header(vec!["Id", "Title", "Status"]);
                 for task in tasks {
-                    println!("{}, {} , {:?}", task.id, task.title, task.status)
+                    table.add_row(vec![
+                        Cell::new(task.id.to_string()),
+                        Cell::new(task.title),
+                        Cell::new(task.status.to_string()).fg(Color::Blue),
+                    ]);
                 }
+                term.write_line(&table.to_string())?;
             }
         }
         Commands::Done(args) => {
